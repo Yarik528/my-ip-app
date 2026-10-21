@@ -3,10 +3,13 @@ package com.example.myipapp
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +31,9 @@ class MainActivity : AppCompatActivity() {
         btnCopy = findViewById(R.id.btnCopy)
         btnRefresh = findViewById(R.id.btnRefresh)
 
-        // Запускаем получение IP при старте
         fetchIpAddress()
+        checkForUpdate()
 
-        // Обработчик кнопки копирования
         btnCopy.setOnClickListener {
             val ip = tvIp.text.toString()
             if (ip != "Загрузка..." && !ip.startsWith("Ошибка") && ip != "Нет интернета") {
@@ -41,7 +43,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Обработчик кнопки обновления
         btnRefresh.setOnClickListener {
             tvIp.text = "Обновление..."
             fetchIpAddress()
@@ -75,6 +76,45 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun checkForUpdate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Ссылка на raw-файл latest_version.txt в твоем репозитории
+                val versionUrl = URL("https://raw.githubusercontent.com/ТВОЙ_НИК/my-ip-app/main/latest_version.txt")
+                val connection = versionUrl.openConnection() as java.net.HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+
+                if (connection.responseCode == 200) {
+                    val remoteVersion = connection.inputStream.bufferedReader().readText().trim().toIntOrNull() ?: 0
+                    val currentVersion = getString(R.string.current_version).toIntOrNull() ?: 0
+
+                    if (remoteVersion > currentVersion) {
+                        withContext(Dispatchers.Main) {
+                            showUpdateDialog(remoteVersion)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace() // Тихо игнорируем ошибки проверки обновлений
+            }
+        }
+    }
+
+    private fun showUpdateDialog(newVersion: Int) {
+        AlertDialog.Builder(this)
+            .setTitle("Доступно обновление!")
+            .setMessage("Вышла новая версия $newVersion. Хотите скачать?")
+            .setPositiveButton("Скачать") { _, _ ->
+                val intent = Intent(Intent.ACTION_VIEW, 
+                    Uri.parse("https://github.com/ТВОЙ_НИК/my-ip-app/releases/latest"))
+                startActivity(intent)
+            }
+            .setNegativeButton("Позже", null)
+            .show()
     }
 
     private fun copyToClipboard(text: String) {
