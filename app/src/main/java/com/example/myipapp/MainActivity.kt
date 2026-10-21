@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Ссылка на raw-файл latest_version.txt в твоем репозитории
-                val versionUrl = URL("https://raw.githubusercontent.com/ТВОЙ_НИК/my-ip-app/main/latest_version.txt")
+                val versionUrl =("https://github.com/Yarik528/my-ip-app/blob/main/latest_version.txt")
                 val connection = versionUrl.openConnection() as java.net.HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connectTimeout = 5000
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Вышла новая версия $newVersion. Хотите скачать?")
             .setPositiveButton("Скачать") { _, _ ->
                 val intent = Intent(Intent.ACTION_VIEW, 
-                    Uri.parse("https://github.com/ТВОЙ_НИК/my-ip-app/releases/latest"))
+                    Uri.parse("https://github.com/Yarik528/my-ip-app/releases/latest"))
                 startActivity(intent)
             }
             .setNegativeButton("Позже", null)
