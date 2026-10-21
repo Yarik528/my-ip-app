@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // ⚠️ ОБЯЗАТЕЛЬНО ЗАМЕНИ "ТВОЙ_НИК" НА СВОЙ НИКНЕЙМ НА GITHUB!
-                val versionUrl = URL("https://raw.githubusercontent.com/ТВОЙ_НИК/my-ip-app/main/latest_version.txt")
+                val versionUrl = URL("https://raw.githubusercontent.com/Yarik528/my-ip-app/main/latest_version.txt")
                 val connection = versionUrl.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connectTimeout = 5000
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showUpdateDialog(newVersion: Int) {
         // ⚠️ И ЗДЕСЬ ТОЖЕ ЗАМЕНИ "ТВОЙ_НИК" НА СВОЙ НИКНЕЙМ!
-        val repoUrl = "https://github.com/ТВОЙ_НИК/my-ip-app/releases/latest"
+        val repoUrl = "https://github.com/Yarik528/my-ip-app/releases/latest"
         
         AlertDialog.Builder(this)
             .setTitle("Доступно обновление!")
