@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = URL("https://api.ipify.org/")
-                val connection = url.openConnection() as java.net.HttpURLConnection
+                val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                         tvIp.text = "Ошибка сервера ($responseCode)"
                     }
                 }
+                connection.disconnect()
             } catch (e: Exception) {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
@@ -81,9 +83,9 @@ class MainActivity : AppCompatActivity() {
     private fun checkForUpdate() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Ссылка на raw-файл latest_version.txt в твоем репозитории
-                val versionUrl =("https://github.com/Yarik528/my-ip-app/blob/main/latest_version.txt")
-                val connection = versionUrl.openConnection() as java.net.HttpURLConnection
+                // ⚠️ ОБЯЗАТЕЛЬНО ЗАМЕНИ "ТВОЙ_НИК" НА СВОЙ НИКНЕЙМ НА GITHUB!
+                val versionUrl = URL("https://raw.githubusercontent.com/ТВОЙ_НИК/my-ip-app/main/latest_version.txt")
+                val connection = versionUrl.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
@@ -98,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                connection.disconnect()
             } catch (e: Exception) {
                 e.printStackTrace() // Тихо игнорируем ошибки проверки обновлений
             }
@@ -105,12 +108,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showUpdateDialog(newVersion: Int) {
+        // ⚠️ И ЗДЕСЬ ТОЖЕ ЗАМЕНИ "ТВОЙ_НИК" НА СВОЙ НИКНЕЙМ!
+        val repoUrl = "https://github.com/ТВОЙ_НИК/my-ip-app/releases/latest"
+        
         AlertDialog.Builder(this)
             .setTitle("Доступно обновление!")
             .setMessage("Вышла новая версия $newVersion. Хотите скачать?")
             .setPositiveButton("Скачать") { _, _ ->
-                val intent = Intent(Intent.ACTION_VIEW, 
-                    Uri.parse("https://github.com/Yarik528/my-ip-app/releases/latest"))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(repoUrl))
                 startActivity(intent)
             }
             .setNegativeButton("Позже", null)
