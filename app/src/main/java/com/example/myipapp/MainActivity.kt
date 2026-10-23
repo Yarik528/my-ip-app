@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnRefresh.setOnClickListener {
-            tvIp.text = "Обновление..."
+            tvIp.text = "Обновление.."
             fetchIpAddress()
         }
     }
